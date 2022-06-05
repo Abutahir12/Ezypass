@@ -1,0 +1,19 @@
+Type: "AWS::DynamoDB::Table"
+Properties:
+  TableName: ${self:custom.EZYPASS_TABLE_NAME}
+  BillingMode: PAY_PER_REQUEST
+  AttributeDefinitions:
+    - AttributeName: ezy_user
+      AttributeType: S
+    - AttributeName: website
+      AttributeType: S                   
+  KeySchema:
+    - AttributeName: ezy_user
+      KeyType: HASH
+  GlobalSecondaryIndexes:
+    - IndexName: byWebsite
+      KeySchema:
+        - AttributeName: website
+          KeyType: HASH
+      Projection:
+        ProjectionType: "ALL"

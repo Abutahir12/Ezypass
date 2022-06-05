@@ -1,0 +1,22 @@
+org: tahir1211
+app: easypass
+service: easypass
+
+frameworkVersion: '3'
+
+custom:
+  EZYPASS_TABLE_NAME: "ezy-pass-${self:provider.stage}"
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: beta
+  environment:
+    EZYPASS_TABLE_NAME: ${self:custom.EZYPASS_TABLE_NAME}
+
+functions:
+  encrypt: ${file(./Resources/encrypt_data_handler.yml)}
+
+resources:
+  Resources:
+    EzyPassDynamoDB: ${file(./dynamoDbConf/ezypass_ddb.yml)}

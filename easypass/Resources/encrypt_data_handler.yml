@@ -1,0 +1,8 @@
+handler: encrypt_data_handler.encrypt
+name: easypass-${self:provider.stage}-encrypt
+events:
+  - http:
+      path: /ezypass/encrypt   
+      method: post
+      cors: true
+      authorizer: aws_iam
