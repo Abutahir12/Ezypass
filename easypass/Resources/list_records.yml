@@ -1,0 +1,34 @@
+handler: ezypass_service.list_records.list_details
+module: ezypass_service
+name: ezypass-list-records-${self:provider.stage}
+layers:
+  - {Ref: CommonLambdaLayer}
+package:
+  include:
+    - ezypass_service/list_records.py
+  exclude:
+    - ./*
+    
+events:
+  - http:
+      path: /ezypass/list   
+      method: get
+      cors: true
+      authorizer: aws_iam
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "email": $"inputs.params("email")",
+            "website": $"inputs.params("website")",
+            "ezy_user": $"inputs.params("ezyUser")",
+            "fetch_one": $"inputs.params("fetch_one")"
+          }'
+      response:
+        headers:
+          Access-Control-Allow-Origin: "'*'"
+
+
+environment:
+  AWS_CMP_ID: ${self:provider.environment.AWS_CMP_ID}          

@@ -1,8 +1,47 @@
-handler: encrypt_data_handler.encrypt
-name: easypass-${self:provider.stage}-encrypt
+handler: ezypass_service.encrypt_data_handler.encryption_handler
+module: ezypass_service
+name: ezypass-encrypt-${self:provider.stage}
+layers:
+  - {Ref: CommonLambdaLayer}
+package:
+  include:
+    - ezypass_service/encrypt_data_handler.py
+  exclude:
+    - ./*
+
 events:
   - http:
       path: /ezypass/encrypt   
       method: post
       cors: true
       authorizer: aws_iam
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "body": $input.json("$")
+          }'
+      response:
+        headers:
+          Access-Control-Allow-Origin: "'*'"
+
+  # - http:
+  #     path: /ezypass/update
+  #     method: put
+  #     cors: true
+  #     authorizer: aws_iam
+  #     integration: lambda
+  #     request:
+  #       passThrough: WHEN_NO_MATCH
+  #       template:
+  #         application/json: '{
+  #           "body": $input.json("$")
+  #         }'
+  #     response:
+  #       headers:
+  #         Access-Control-Allow-Origin: "'*'"
+
+
+environment:
+  AWS_CMP_ID: ${self:provider.environment.AWS_CMP_ID}          

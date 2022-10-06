@@ -3,17 +3,21 @@ Properties:
   TableName: ${self:custom.EZYPASS_TABLE_NAME}
   BillingMode: PAY_PER_REQUEST
   AttributeDefinitions:
-    - AttributeName: ezy_user
+    - AttributeName: email
       AttributeType: S
     - AttributeName: website
-      AttributeType: S                   
+      AttributeType: S        
+    - AttributeName: ezyUser
+      AttributeType: S           
   KeySchema:
-    - AttributeName: ezy_user
+    - AttributeName: email
       KeyType: HASH
+    - AttributeName: website
+      KeyType: RANGE  
   GlobalSecondaryIndexes:
-    - IndexName: byWebsite
+    - IndexName: byEzyUser
       KeySchema:
-        - AttributeName: website
+        - AttributeName: ezyUser
           KeyType: HASH
       Projection:
         ProjectionType: "ALL"

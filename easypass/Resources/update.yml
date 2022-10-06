@@ -1,0 +1,31 @@
+handler: ezypass_service.update_details.update_details
+module: ezypass_service
+name: ezypass-update-${self:provider.stage}
+layers:
+  - {Ref: CommonLambdaLayer}
+package:
+  include:
+    - ezypass_service/update_details.py
+  exclude:
+    - ./*
+    
+events:
+  - http:
+      path: /ezypass/update   
+      method: put
+      cors: true
+      authorizer: aws_iam
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "body": $input.json("$")
+          }'
+      response:
+        headers:
+          Access-Control-Allow-Origin: "'*'"
+
+
+environment:
+  AWS_CMP_ID: ${self:provider.environment.AWS_CMP_ID}          

@@ -2,10 +2,31 @@ org: tahir1211
 app: easypass
 service: easypass
 
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 custom:
-  EZYPASS_TABLE_NAME: "ezy-pass-${self:provider.stage}"
+  EZYPASS_TABLE_NAME: ezypass-${self:provider.stage}
+  AWS_CMP_ID: 57921ecf-f4c9-4bf6-8c27-d4b05a59869d
+
+layers:
+  common:
+    path: common
+    name: utils
+    description: lambda layer of ezypass functions
+    compatibleRuntimes:
+      - python3.8
+    retain: false  
+        
+
+package:
+  individually: true
+  pythonRequirements:
+    slim: true
+    layer: true
+  # patterns:
+  #   # - '!node_modules/**' 
+  #   - '!requirements.txt'
+  #   # - '!package.json' 
 
 provider:
   name: aws
@@ -13,9 +34,14 @@ provider:
   stage: beta
   environment:
     EZYPASS_TABLE_NAME: ${self:custom.EZYPASS_TABLE_NAME}
+    AWS_CMP_ID: ${self:custom.AWS_CMP_ID}
 
 functions:
   encrypt: ${file(./Resources/encrypt_data_handler.yml)}
+  update: ${file(./Resources/update.yml)}
+  list: ${file(./Resources/list_records.yml)}
+  delete: ${file(./Resources/delete_record.yml)}
+  generate_password: ${file(./Resources/password_generator.yml)}
 
 resources:
   Resources:

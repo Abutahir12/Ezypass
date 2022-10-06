@@ -1,0 +1,32 @@
+handler: ezypass_service.delete_record.delete_record
+module: ezypass_service
+name: ezypass-delete-${self:provider.stage}
+layers:
+  - {Ref: CommonLambdaLayer}
+package:
+  include:
+    - ezypass_service/delete_record.py
+  exclude:
+    - ./*
+    
+events:
+  - http:
+      path: /ezypass/delete   
+      method: delete
+      cors: true
+      authorizer: aws_iam
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "email": $"inputs.params("email")",
+            "website": $"inputs.params("website")"
+          }'
+      response:
+        headers:
+          Access-Control-Allow-Origin: "'*'"
+
+
+environment:
+  AWS_CMP_ID: ${self:provider.environment.AWS_CMP_ID}          
